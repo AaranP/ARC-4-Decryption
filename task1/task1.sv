@@ -5,8 +5,34 @@ module task1(input logic CLOCK_50, input logic [3:0] KEY, input logic [9:0] SW,
 
     // your code here
 
-    s_mem s( /* connect ports */ );
+    wire [7:0] wdata, rdata, address;
+    wire wren, en, rdy; 
+    reg enx;
 
-    // your code here
+    assign rst_n = KEY[3];
+    assign en = enx;
+ 
+    s_mem s(.address(address), .clock(CLOCK_50), .data(wdata), .wren(wren), .q(rdata) );
+
+    init init(.clk(CLOCK_50), .rst_n(rst_n),
+            .en(en), .rdy(rdy), .addr(address), .wrdata(wdata), .wren(wren));
+
+
+/*always_ff@(posedge CLOCK_50 or negedge rst_n) begin
+        if(rdy == 1'b1) begin
+                enx = 1'b1;
+        end else begin 
+                enx = 1'b0;
+        end
+end
+*/
+
+always@(*) begin
+        if(rdy) begin
+                enx = 1'b1;
+        end else begin  
+                enx = 1'b0;
+        end
+end
 
 endmodule: task1
