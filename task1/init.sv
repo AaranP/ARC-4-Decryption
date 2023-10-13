@@ -10,14 +10,14 @@ reg [1:0] current_state;
 always_ff@(posedge clk or negedge rst_n) begin
 	
 	if(~rst_n) begin
-		{rdy, wren, addr, wrdata, current_state} = {1'b1, 1'b0, 8'b0, 8'b0, `reset_start};
-	end
+		{rdy, wren, addr, wrdata, current_state} = {1'b1, 1'b0, 8'd0, 8'd0, `reset_start};
+	end else begin
 
 	case(current_state) 
 		`reset_start : begin
-					{rdy, wren, addr, wrdata} = {1'b1, 1'b0, 8'b0, 8'b0};
+					{rdy, wren, addr, wrdata} = {1'b1, 1'b0, 8'd0, 8'd0};
 					if (en) begin
-						{rdy, wren, addr, wrdata} = {1'b1, 1'b1, addr + 8'b1, wrdata + 8'b1};
+						{rdy, wren, addr, wrdata} = {1'b1, 1'b1, addr + 8'd1, wrdata + 8'd1};
 						current_state = `load;
 					end else begin
 						current_state = `reset_start;
@@ -28,17 +28,18 @@ always_ff@(posedge clk or negedge rst_n) begin
 				if (addr == 8'b11111111) begin	
 					current_state = `stop;
 				end else begin	
-					{rdy, wren, addr, wrdata} = {1'b1, 1'b1, addr + 8'b1, wrdata + 8'b1};
+					{rdy, wren, addr, wrdata} = {1'b1, 1'b1, addr + 8'd1, wrdata + 8'd1};
 					current_state = `load;
 				end
 				end
 
 		`stop : begin	
-				{rdy, wren, addr, wrdata} = {1'b1, 1'b0, addr, wrdata};
+				{rdy, wren, addr, wrdata} = {1'b1, 1'b0, 8'd0, 8'd0};
 				current_state = `stop;
 				end
 		default : current_state = `stop;
 	endcase
 
+	end
 end
 endmodule: init
