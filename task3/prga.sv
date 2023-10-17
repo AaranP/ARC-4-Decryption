@@ -7,6 +7,7 @@
 `define state5      3'd7
 `define state6      3'd8
 `define done        3'd9
+`define dummy       3'd10 //dummy state to delay for memory reading
 
 module prga(input logic clk, input logic rst_n,
             input logic en, output logic rdy,
@@ -42,7 +43,7 @@ logic [7:0] length, i, j, count, data1, data2, value, value2, value3;
 			            {rdy, s_addr, s_wrdata, s_wren, ct_addr, pt_addr, pt_wrdata, pt_wren} <= {1'b0, 8'd0, 8'd0, 1'b0, 8'd0, 8'd0, 8'd0, 1'b0};  
                          if (en) begin 
                            current_state <= `state1;
-			   rdy <= 1'b1;
+                           rdy <= 1'b1;
                          end else begin  
                             current_state <= `start;
                          end
@@ -52,9 +53,9 @@ logic [7:0] length, i, j, count, data1, data2, value, value2, value3;
                              i <= (i + 8'b1) % 256;
                              {rdy, s_addr, s_wrdata, s_wren, ct_addr, pt_addr, pt_wrdata, pt_wren} = {1'b0, i, 8'd0, 1'b0, 8'd0, 8'd0, 8'd0, 1'b0};
                               current_state <= `state2;
-                          end else begin    
-			      {rdy, s_addr, s_wrdata, s_wren, ct_addr, pt_addr, pt_wrdata, pt_wren} <= {1'b0, 8'd0, 8'd0, 1'b0, 8'd0, 8'd0, 8'd0, 1'b0};  
-                              current_state <= `done;
+                          end else begin
+                            {rdy, s_addr, s_wrdata, s_wren, ct_addr, pt_addr, pt_wrdata, pt_wren} <= {1'b0, 8'd0, 8'd0, 1'b0, 8'd0, 8'd0, 8'd0, 1'b0};  
+                            current_state <= `done;
                           end
                           end
                 
@@ -90,6 +91,8 @@ logic [7:0] length, i, j, count, data1, data2, value, value2, value3;
                         {rdy, s_addr, s_wrdata, s_wren, ct_addr, pt_addr, pt_wrdata, pt_wren} = {1'b1, 8'd0, 8'd0, 1'b0, 8'd0, 8'd0, 8'd0, 1'b0};
                         current_state <= `done;
                         end
+
+                
                 default : current_state <= `done;
             endcase
         end

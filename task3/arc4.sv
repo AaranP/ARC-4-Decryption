@@ -14,7 +14,9 @@ module arc4(input logic clk, input logic rst_n,
     s_mem s(.address(smadd), .clock(clk), .data(swdata), .wren(swen), .q(srdata));
     init i(.clk(clk), .rst_n(rst_n),.en(en), .rdy(rdy), .addr(smadd), .wrdata(swdata), .wren(swen));
 
-    ksa k( /* connect ports */ );
+
+    ksa k(.clk(clk), .rst_n(rst_n), .en(en), .rdy(rdy), .key(key), .addr(ct_addr), .rdata(ct_rddata), .wrdata(pt_wrdata), .wren(pt_wren));
+
     prga p(.clk(clk), .rst_n(rst_n), .en(enprga), .rdy(rdyprga),
             .key(key), .s_addr(smadd), .s_rddata(srdata), .s_wrdata(swdata), .s_wren(swen),
             .ct_addr(ct_adder), .ct_rddata(ct_rddata), .pt_addr(pt_addr),
