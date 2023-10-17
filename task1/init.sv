@@ -28,7 +28,7 @@ always_ff@(posedge clk or negedge rst_n) begin
 				if (addr == 8'b11111111) begin	
 					current_state = `stop;
 				end else begin	
-					{rdy, wren, addr, wrdata} = {1'b1, 1'b1, addr + 8'd1, wrdata + 8'd1};
+					{rdy, wren, addr, wrdata} = {1'b0, 1'b1, addr + 8'd1, wrdata + 8'd1};
 					current_state = `load;
 				end
 				end
