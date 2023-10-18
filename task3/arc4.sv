@@ -23,10 +23,10 @@ module arc4(input logic clk, input logic rst_n,
 
     init i(.clk(clk), .rst_n(rst_n),.en(en_init), .rdy(rdy_init), .addr(init_addr), .wrdata(init_wrdata), .wren(init_wren));
 
-    ksa k(.clk(clk), .rst_n(rst_n), .en(en_ksa), .rdy(rdy_ksa), .key(key), .addr(ksa_addr), .rdata(ksa_rdata), .wrdata(ksa_wrdata), .wren(ksa_wren));
+	ksa k(.clk(clk), .rst_n(rst_n), .en(en_ksa), .rdy(rdy_ksa), .key(key), .addr(ksa_addr), .rdata(sm_rdata), .wrdata(ksa_wrdata), .wren(ksa_wren));
 
     prga p(.clk(clk), .rst_n(rst_n), .en(en_prga), .rdy(rdy_prga),
-            .key(key), .s_addr(prga_addr), .s_rddata(prga_rdata), .s_wrdata(prga_wrdata), .s_wren(prga_wren),
+	   .key(key), .s_addr(prga_addr), .s_rddata(sm_rdata), .s_wrdata(prga_wrdata), .s_wren(prga_wren),
             .ct_addr(ct_adder), .ct_rddata(ct_rddata), .pt_addr(pt_addr),
 	    .pt_rddata(pt_rddata), .pt_wrdata(pt_wrdata), .pt_wren(pt_wren));
 
@@ -48,7 +48,7 @@ module arc4(input logic clk, input logic rst_n,
                                 rdy <= 0;
                                 current_state <= `initialize;
 				{en_init, en_ksa, en_prga} <= {0,1,0};
-				{sm_wrdata} <={1};
+				{sm_wrdata} <={init_wrdata};
 				{sm_wren, sm_addr} <= {init_wren, init_addr};
 
                         end
@@ -84,12 +84,12 @@ module arc4(input logic clk, input logic rst_n,
                 end
 
                 `randomnum: begin
-                        if(~rdy_prga & en_prga) begin
+			en_prga <= 1'b0;
+                        if(rdy_prga) begin
                                 current_state = `done;
                                 {en_init, en_ksa, en_prga} <= {0,0,0};
-                                {ksa_rdata, prga_rdata, sm_rdata} <={0, sm_wrdata, 0};
+				{sm_wrdata} <={8'd0};
                                 {sm_wren, sm_addr} <= {ksa_wren,ksa_addr};
-                                rdy_prga <= 1;
                         end
                         else current_state = `randomnum;
 
@@ -97,9 +97,9 @@ module arc4(input logic clk, input logic rst_n,
                 
                 `done: begin
 
-                        current_state <= `start;
+                        current_state <= `done;
                         {en_init, en_ksa, en_prga} <= {0,0,0};
-                        {ksa_rdata, prga_rdata, sm_rdata} <={0,0,0};
+			{sm_wrdata} <={0};
                         {sm_wren, sm_addr} <= {0,0};
                         rdy <= 1;
 
