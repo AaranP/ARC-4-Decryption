@@ -18,7 +18,7 @@ module prga(input logic clk, input logic rst_n,
 
 logic [2:0] current_state;
 integer k;
-logic [7:0] length, i, j, count, data1, data2, value, value2, value3;
+logic [7:0] length, i, j, count, data1, data2, value, value2;
     // your code here
 
     always_ff@(posedge clk or negedge rst_n) begin
@@ -48,7 +48,7 @@ logic [7:0] length, i, j, count, data1, data2, value, value2, value3;
                             current_state <= `start;
                          end
                 `start : begin
-                        length <= ct_rddata - 8'd1;
+                        length <= ct_rddata - 8'd1;     //get's length of CT
 
                         rdy <=0;
                         s_addr <= 0;
@@ -73,7 +73,7 @@ logic [7:0] length, i, j, count, data1, data2, value, value2, value3;
                              i <= (i + 8'b1) % 256;
 
                             rdy <=0;
-                            s_addr <= i;
+                            s_addr <= i;    //s[i]
                             s_wrdata <= 0;
                             s_wren <= 0;
                             ct_addr <= 0;
@@ -99,10 +99,10 @@ logic [7:0] length, i, j, count, data1, data2, value, value2, value3;
                 
                 `state2 : begin
                           j <= (j + s_rddata) % 256;
-                          data1 <= s_rddata;
+                          data1 <= s_rddata;    //temp data1 = s[i]
 
                             rdy <=0;
-                            s_addr <= j;
+                            s_addr <= j;        //s[j]
                             s_wrdata <= 0;
                             s_wren <= 0;
                             ct_addr <= 0;
@@ -114,10 +114,10 @@ logic [7:0] length, i, j, count, data1, data2, value, value2, value3;
                           end
                 
                 `state3 : begin 
-                          data2 <= s_rddata;
+                          data2 <= s_rddata;    //temp data2 = [sj]
 
                           rdy <=0;
-                            s_addr <= (data1 + data2) %256;
+                            s_addr <= (data1 + data2) %256; // pad[k] s[(s[i] + s[j]) mod 256]
                             s_wrdata <= 0;
                             s_wren <= 0;
                             ct_addr <= 0;
@@ -129,7 +129,7 @@ logic [7:0] length, i, j, count, data1, data2, value, value2, value3;
                           end
                 
                 `state4 : begin 
-                          value <= s_rddata;
+                          value <= s_rddata;  //ciphertext[k]
 
                             rdy <=0;
                             s_addr <= s_addr;
@@ -144,7 +144,7 @@ logic [7:0] length, i, j, count, data1, data2, value, value2, value3;
                           end
 
                 `state5 : begin 
-                          value2 <= ct_rddata;
+                          value2 <= ct_rddata; //pad[k]
 
                             rdy <=0;
                             s_addr <= s_addr;
@@ -153,7 +153,7 @@ logic [7:0] length, i, j, count, data1, data2, value, value2, value3;
                             ct_addr <= count;
 
                             pt_addr <= count;
-                            pt_wrdata <= value2 ^ value;
+                            pt_wrdata <= value2 ^ value;    //plaintext[k]
                             pt_wren <= 1;
 
                           current_state <= `state6;
@@ -167,12 +167,13 @@ logic [7:0] length, i, j, count, data1, data2, value, value2, value3;
                             ct_addr <= count;
 
                             pt_addr <= count;
-                            pt_wrdata <=value3;
+                            pt_wrdata <=0;
                             pt_wren <= 0;
 
                           count <= count + 1;
                           current_state <= `state1;
                           end
+
                 `done : begin
                             rdy <=1;
                             s_addr <= 0;
