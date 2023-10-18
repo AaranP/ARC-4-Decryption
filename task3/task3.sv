@@ -58,7 +58,7 @@ module task3(input logic CLOCK_50, input logic [3:0] KEY, input logic [9:0] SW,
                          en<=0;
                   end
 
-                  default: current_state <= `start;
+                  default: current_state <= `done;
                   endcase
                   end
 
