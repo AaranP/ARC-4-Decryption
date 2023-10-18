@@ -1,19 +1,66 @@
+`define reset = 3'd1;
+`define start = 3'd2;
+`define decrypt = 3'd3;
+`define done = 3'd4;
+//`define randomnum = 3'd5;
+//`define done = 3'd6;
+
 module task3(input logic CLOCK_50, input logic [3:0] KEY, input logic [9:0] SW,
              output logic [6:0] HEX0, output logic [6:0] HEX1, output logic [6:0] HEX2,
              output logic [6:0] HEX3, output logic [6:0] HEX4, output logic [6:0] HEX5,
              output logic [9:0] LEDR);
 
-    // your code here
+             logic en, rdy,current_state;
 
-    ct_mem ct(.address(ct_addr), .clock(CLOCK_50), .q(ct_rddata));
+            logic[7:0] ct_addr, ct_rdata;
+             logic[7:0] pt_addr, pt_wrdata, pt_wren, pt_rdata, 
 
-    pt_mem pt(.address(pt_addr), .clock(CLOCK_50), .data(pt_wrdata), .wren(pt_wren), .q(pt_rddata));
+            ct_mem ct(.address(ct_addr), .clock(CLOCK_50), .q(ct_rdata));
 
-    arc4 a4(.clk(CLOCK_50), .rst_n(1), .en(en), .rdy(rdy), .key(key), 
-		.ct_addr(ct_addr), .ct_rddata(ct_rddata), .pt_addr(pt_addr), 
-		.pt_rddata(pt_rddata), .pt_wrdata(pt_wrdata), .pt_wren(pt_wren));
+            pt_mem pt(.address(pt_addr), .clock(CLOCK_50), .data(pt_wrdata), .wren(pt_wren), .q(pt_rdata));
 
-    // your code here
-    
+            arc4 a4(.clk(CLOCK_50), .rst_n(rst_n), .en(en), .rdy(rdy), .key(key), .ct_addr(ct_addr), .ct_rddata(ct_rdata), .pt_addr(pt_addr), 
+                  .pt_rddata(pt_rdata), .pt_wrdata(pt_wrdata), .pt_wren(pt_wren));
+            
+            assign rst_n = KEY[3];
+            assign key = {14'b0, SW[9:0]};
 
+            always@(posedge CLOCK_50) begin
+                if(~rst_n) begin
+                  en <= 0;
+                  current_state <= `reset;
+                end else begin
+                  case(current_state) 
+                  `reset: begin
+                          en<=0;
+                          current_state <= `start;
+                  end
+
+                  `start: begin
+                          en<= 0;
+                          if(rdy) begin
+                            current_state <= `decrypt;
+                            en <=1;
+                          end
+                          else current_state <= `start;
+                  end
+                  
+                  `decrypt: begin
+                            if(rdy) begin
+                              current_state<= `done;
+                              en <= 0;
+                            end
+                            else current_state<= `decrypt;
+                  end
+
+                  `done: begin
+                         current_state <= start;
+                         en<=0;
+                  end
+
+                  default: current_state <= `start;
+                  endcase
+                  end
+
+                end
 endmodule: task3
