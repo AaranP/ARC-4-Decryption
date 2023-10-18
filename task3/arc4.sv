@@ -1,9 +1,9 @@
-`define reset 3'd1;
-`define start 3'd2;
-`define initialize 3'd3;
-`define keyschedule 3'd4;
-`define randomnum 3'd5;
-`define done 3'd6;
+`define reset 3'd1
+`define start 3'd2
+`define initialize 3'd3
+`define keyschedule 3'd4
+`define randomnum 3'd5
+`define done 3'd6
 
 module arc4(input logic clk, input logic rst_n,
             input logic en, output logic rdy,
@@ -12,7 +12,7 @@ module arc4(input logic clk, input logic rst_n,
             output logic [7:0] pt_addr, input logic [7:0] pt_rddata, output logic [7:0] pt_wrdata, output logic pt_wren);
 
     // your code here
-    logic [2:0] current_state
+    logic [2:0] current_state;
     logic [7:0] sm_addr, sm_wren, sm_rdata, sm_wrdata; //system memory 
     logic [7:0] en_init, rdy_init, init_addr, init_wrdata, init_wren; //initialization
     logic [7:0] en_ksa, rdy_ksa, ksa_addr, ksa_rdata, ksa_wrdata, ksa_wren; //KSA
@@ -33,35 +33,39 @@ module arc4(input logic clk, input logic rst_n,
     // your code here=
 
     always@(posedge clk or negedge rst_n)begin
-        if(~reset_n) begin
-		{en_init, en_ksa, en_prga} <= {1,0,0};
+
+        if(~rst_n) begin
+		{en_init, en_ksa, en_prga} <= {1'b1,1'b0,1'b0};
 		{sm_wrdata} <={init_wrdata};
 		{sm_wren, sm_addr} <= {init_wren,init_addr};
 
                 current_state <= `start; 
 
-        else begin
+        end else begin
+
                 case(current_state)
                 `start: begin
-                        rdy <= 1;
+                        rdy <= 1'b1;
                         if(en) begin
-                                rdy <= 0;
+                                rdy <= 1'b0;
                                 current_state <= `initialize;
-				{en_init, en_ksa, en_prga} <= {0,1,0};
+				{en_init, en_ksa, en_prga} <= {1'b0,1'b1,1'b0};
 				{sm_wrdata} <={init_wrdata};
 				{sm_wren, sm_addr} <= {init_wren, init_addr};
 
                         end
-                        else current_state <= `start;
+                        else begin 
+			current_state <= `start;
 
-                end
+               			 end
+			end
 
                 ` initialize: begin
 			en_init <= 1'b0;
                         if(rdy_init) begin //not ready
 
                                 current_state = `keyschedule;
-                                {en_init, en_ksa, en_prga} <= {0,1,0};
+                                {en_init, en_ksa, en_prga} <= {1'b0,1'b1,1'b0};
 				{sm_wrdata} <= {ksa_wrdata};
 				{sm_wren, sm_addr} <= {ksa_wren,ksa_addr};
         
@@ -75,7 +79,7 @@ module arc4(input logic clk, input logic rst_n,
 			en_ksa <= 1'b0;
 			if(rdy_ksa) begin
                                 current_state = `randomnum;
-                                {en_init, en_ksa, en_prga} <= {0,0,1};
+                                {en_init, en_ksa, en_prga} <= {1'b0,1'b0,1'b1};
 				{sm_wrdata} <={prga_wrdata};
 				{sm_wren, sm_addr} <= {prga_wren,prga_addr};
 
@@ -87,7 +91,7 @@ module arc4(input logic clk, input logic rst_n,
 			en_prga <= 1'b0;
                         if(rdy_prga) begin
                                 current_state = `done;
-                                {en_init, en_ksa, en_prga} <= {0,0,0};
+                                {en_init, en_ksa, en_prga} <= {1'b0,1'b0,1'b0};
 				{sm_wrdata} <={8'd0};
                                 {sm_wren, sm_addr} <= {ksa_wren,ksa_addr};
                         end
@@ -98,9 +102,9 @@ module arc4(input logic clk, input logic rst_n,
                 `done: begin
 
                         current_state <= `done;
-                        {en_init, en_ksa, en_prga} <= {0,0,0};
-			{sm_wrdata} <={0};
-                        {sm_wren, sm_addr} <= {0,0};
+                        {en_init, en_ksa, en_prga} <= {1'b0,1'b0,1'b0};
+			{sm_wrdata} <={8'd0};
+                        {sm_wren, sm_addr} <= {1'b0,8'd0};
                         rdy <= 1;
 
                 end
@@ -111,6 +115,6 @@ module arc4(input logic clk, input logic rst_n,
         end
         end
 
-    end
+   
 
 endmodule: arc4
