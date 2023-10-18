@@ -1,7 +1,7 @@
-`define reset = 3'd1;
-`define start = 3'd2;
-`define decrypt = 3'd3;
-`define done = 3'd4;
+`define reset 3'd1
+`define start 3'd2
+`define decrypt 3'd3
+`define done 3'd4
 //`define randomnum = 3'd5;
 //`define done = 3'd6;
 
@@ -13,7 +13,7 @@ module task3(input logic CLOCK_50, input logic [3:0] KEY, input logic [9:0] SW,
              logic en, rdy,current_state;
 
             logic[7:0] ct_addr, ct_rdata;
-             logic[7:0] pt_addr, pt_wrdata, pt_wren, pt_rdata, 
+             logic[7:0] pt_addr, pt_wrdata, pt_wren, pt_rdata;
 
             ct_mem ct(.address(ct_addr), .clock(CLOCK_50), .q(ct_rdata));
 
@@ -25,25 +25,21 @@ module task3(input logic CLOCK_50, input logic [3:0] KEY, input logic [9:0] SW,
             assign rst_n = KEY[3];
             assign key = {14'b0, SW[9:0]};
 
-            always@(posedge CLOCK_50) begin
+            always@(posedge CLOCK_50 or negedge rst_n) begin
                 if(~rst_n) begin
-                  en <= 0;
-                  current_state <= `reset;
+                  en <= 1'b1;
+                  current_state <= `start;
                 end else begin
                   case(current_state) 
-                  `reset: begin
-                          en<=0;
-                          current_state <= `start;
-                  end
-
+                  
                   `start: begin
-                          en<= 0;
+                          en<= 1'b1;
                           if(rdy) begin
                             current_state <= `decrypt;
-                            en <=1;
+                            en <=1'b0;
                           end
                           else current_state <= `start;
-                  end
+                  	end
                   
                   `decrypt: begin
                             if(rdy) begin
@@ -51,10 +47,10 @@ module task3(input logic CLOCK_50, input logic [3:0] KEY, input logic [9:0] SW,
                               en <= 0;
                             end
                             else current_state<= `decrypt;
-                  end
+                  	end
 
                   `done: begin
-                         current_state <= start;
+                         current_state <= `done;
                          en<=0;
                   end
 
