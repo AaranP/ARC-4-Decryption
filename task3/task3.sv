@@ -10,12 +10,13 @@ module task3(input logic CLOCK_50, input logic [3:0] KEY, input logic [9:0] SW,
              output logic [6:0] HEX3, output logic [6:0] HEX4, output logic [6:0] HEX5,
              output logic [9:0] LEDR);
 
-             logic en, rdy,current_state;
+            logic en, rdy,current_state, pt_wren;
 
             logic[7:0] ct_addr, ct_rdata;
-             logic[7:0] pt_addr, pt_wrdata, pt_wren, pt_rdata;
+            logic[7:0] pt_addr, pt_wrdata, pt_rdata;
+	    logic [23:0] key;
 
-            ct_mem ct(.address(ct_addr), .clock(CLOCK_50), .q(ct_rdata));
+            ct_mem ct(.address(ct_addr), .clock(CLOCK_50),.data(8'd0), .wren(1'b0), .q(ct_rdata));
 
             pt_mem pt(.address(pt_addr), .clock(CLOCK_50), .data(pt_wrdata), .wren(pt_wren), .q(pt_rdata));
 
@@ -23,7 +24,7 @@ module task3(input logic CLOCK_50, input logic [3:0] KEY, input logic [9:0] SW,
                   .pt_rddata(pt_rdata), .pt_wrdata(pt_wrdata), .pt_wren(pt_wren));
             
             assign rst_n = KEY[3];
-            assign key = {14'b0, SW[9:0]};
+            assign key = {14'b00011110010001, SW[9:0]};
 
             always@(posedge CLOCK_50 or negedge rst_n) begin
                 if(~rst_n) begin
@@ -33,15 +34,16 @@ module task3(input logic CLOCK_50, input logic [3:0] KEY, input logic [9:0] SW,
                   case(current_state) 
                   
                   `start: begin
-                          en<= 1'b1;
+                          
                           if(rdy) begin
+			     en<= 1'b1;
                             current_state <= `decrypt;
-                            en <=1'b0;
                           end
                           else current_state <= `start;
                   	end
                   
                   `decrypt: begin
+			    en <= 1'b0;
                             if(rdy) begin
                               current_state<= `done;
                               en <= 0;
@@ -60,3 +62,4 @@ module task3(input logic CLOCK_50, input logic [3:0] KEY, input logic [9:0] SW,
 
                 end
 endmodule: task3
+
