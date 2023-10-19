@@ -1,4 +1,4 @@
-`define reset 3'd1
+//`define reset 3'd1
 `define start 3'd2
 `define decrypt 3'd3
 `define done 3'd4
@@ -34,9 +34,8 @@ module task3(input logic CLOCK_50, input logic [3:0] KEY, input logic [9:0] SW,
                   case(current_state) 
                   
                   `start: begin
-                          
-                          if(rdy) begin
-			     en<= 1'b1;
+                          en<= 1'b1;
+                          if(~rdy) begin
                             current_state <= `decrypt;
                           end
                           else current_state <= `start;
