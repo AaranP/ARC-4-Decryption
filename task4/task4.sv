@@ -3,6 +3,7 @@
 `define state2 3'd2
 `define state3 3'd3
 `define done 3'd4
+`define statea 3'd5
 `define blank 7'b1111111
 `define dash  7'b0111111
 `define zero  7'b1000000
@@ -60,9 +61,13 @@ module task4(input logic CLOCK_50, input logic [3:0] KEY, input logic [9:0] SW,
             `start : {current_state, en} <= {`state1, 1'b1};
             `state1 : begin
                       en <= 1'b0;
-                      if (rdy && key_valid == 1'b0) begin
+		      current_state <= `statea;
+		      end
+	    `statea : begin
+			
+                      if ((rdy == 1'b1) && (key_valid == 1'b0)) begin
                         current_state <= `state2;
-                      end else if (rdy && key_valid == 1'b1) begin
+                      end else if ((rdy == 1'b1) && (key_valid == 1'b1)) begin
                         current_state <= `state3;
                       end else begin
                         current_state <= `state1;
@@ -70,7 +75,7 @@ module task4(input logic CLOCK_50, input logic [3:0] KEY, input logic [9:0] SW,
                     end 
             `state2 : begin
                       {HEX5, HEX4, HEX3, HEX2, HEX1, HEX0} <= {`dash, `dash, `dash, `dash, `dash, `dash};
-                      current_state <= `done;
+                      current_state <= `state2;
                     end
             `state3 : begin
                       {HEX5, HEX4, HEX3, HEX2, HEX1, HEX0} <= {hex5, hex4, hex3, hex2, hex1, hex0};
