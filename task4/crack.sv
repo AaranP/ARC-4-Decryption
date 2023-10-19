@@ -1,9 +1,11 @@
 `define reset 3'd1
 `define start 3'd2
 `define read_word 3'd3
-`define check_word 3'd4
-`define key_check 3'd5
-`define done 3'd6
+`define key_check 3'd4
+`define key_process 3'd5
+`define key_isvalid 3'd6
+`define key_notvalid 3'd7
+`define done 3'd8
 
 
 module crack(input logic clk, input logic rst_n,
@@ -61,17 +63,17 @@ module crack(input logic clk, input logic rst_n,
                                     current_state <= `read_word;
                                 end
                     end
-                    `check_word: begin
+                    `key_check: begin
                                 if((pt_rddata >= 'h20) && (pt_rddata <= 'h7E)) begin
                                     if(count_pt == (ct_rddata - 1'b1)) begin
-                                            current_state <= `done;                                          
+                                            current_state <= `key_isvalid;                                          
                                     end
                                     else begin
                                             current_state <= `read_word;
                                             count_pt <= count_pt + 1'b1;
                                 end
                                 else begin 
-                                    current_state <= `keycheck;
+                                    current_state <= `key_process;
                                     count_pt <= 0;
 
                                 end
@@ -79,19 +81,31 @@ module crack(input logic clk, input logic rst_n,
                     end
 
                     end
-                    `keycheck: begin
+
+                    `key_process: begin
                                 if(key < 24'b1) begin
                                     key <= key + 1'b1;
                                     current_state <= `read_word;
                                 end
                                 else begin
-                                    current_state <= `done;
+
+                                    current_state <= `key_notvalid;
                                 end
                     end
-                    
-                    `done: begin
-                            if(
 
+                    `key_isvalid: begin
+                                    key_valid <= 1;
+                                    rdy <= 1;
+                    end
+
+                    `key_notvalid: begin
+                                    key_valid <=0;
+                                    rdy<= 1; 
+                                    current_state <= `start; 
+                    end
+                    
+                    default: current_state <= `start;
+                   
                     endcase
                 end
 
