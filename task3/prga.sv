@@ -59,7 +59,7 @@ module prga(input logic clk, input logic rst_n,
 
             `state2 : begin // initialize i
                       {length, i, j, k, si, sj, padk, ctk, pause} <= {length, i, j, k, si, sj, padk, ctk, 8'd0};
-                      if (k < (length + 8'd1)) begin
+                      if (k < (length)) begin
                         current_state <= `state3;
                         i <= (i+8'd1) % 256;
                         
@@ -143,7 +143,7 @@ module prga(input logic clk, input logic rst_n,
                     end
 	    `donea : begin
 		     {length, i, j, k, si, sj, padk, ctk, pause} <= {length, i, j, k, si, sj, padk, ctk, 8'd0};
-                     {s_addr, s_wrdata, s_wren, ct_addr, pt_addr, pt_wrdata, pt_wren} <= {8'd0, 8'd0, 1'b0, 8'd0, 8'd0, length , 1'b0};
+                     {s_addr, s_wrdata, s_wren, ct_addr, pt_addr, pt_wrdata, pt_wren} <= {8'd0, 8'd0, 1'b0, 8'd0, 8'd0, 8'd0 , 1'b0};
                      current_state <= `donea;
 		     end
             default : current_state <= `donea;
@@ -151,9 +151,7 @@ module prga(input logic clk, input logic rst_n,
         end
     end
                       
-
-                               
-                
+        
 
 endmodule: prga
 
