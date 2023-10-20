@@ -44,51 +44,50 @@ task2 dut(.CLOCK_50(CLOCK_50), .KEY(KEY), .SW(SW),
         task printvalues;
 	        $display("HEX0: %b, HEX1: %b, HEX2: %b, HEX3: %b, HEX4: %b, HEX5: %b, key: %h", HEX0, HEX1, HEX2, HEX3, HEX4, HEX5, dut.key);
             $display("rdy:%b, wrdata: %h, wren: %b, addr: %h", rdy, wrdata, wren, addr);
-        ENDTASK
+        endtask
 
 
         initial begin
-                rst_n = 1;
-                en = 1;
-                key = 24'h000000;
-                rddata = 8'b0011001;
+                KEY[3] = 1;
+                //en = 1;
+                SW[9:0] = 10'b0000011000;
                 #10;
                 printvalues;
                 #10;
-                rddata = 8'b11111111
+                //rddata = 8'b11111111
                 printvalues;
 
        
-                rst_n =0; 
-                en= 0;
+                KEY[3] =0; 
+                //en= 0;
                 #10;
                 printvalues;
                 #10;
        
-                rst_n =1; 
-                en= 0;
+                KEY[3] =1; 
+                //en= 0;
                 #10;
                 printvalues;
                 #10;
        
-                rst_n =0; 
-                en= 1;
+                KEY[3] =0; 
+                //en= 1;
                 #10;
                 printvalues;
                 #10;
         end
 
         initial begin
-                rst_n = 1;
-                en = 1;
-                addr = 8'b0;
-                key = 24'h000000;
+                KEY[3] = 1;
+                //en = 1;
+                //addr = 8'b0;
+                SW[9:0] = 10'b0000011000;
                 #10;
                  for (int i = 0; i < 256; i = i + 1) begin
-                key = {24'h000000, i};
+                SW[9:0] = {10'b0000011000,i}; 
 
-                $display("Test vector %d, addr: %h, rddata: %h, rdy:%b, wrdata: %b, wren: %b, key:%h", 
-                          i, addr, rddata, rdy, wrdata, wren, key);
+                $display("Test vector %d, addr: %h, rddata: %h, rdy:%b, wrdata: %b, wren: %b", 
+                          i, addr, rddata, rdy, wrdata, wren);
                 printvalues; 
                 end
 

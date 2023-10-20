@@ -32,7 +32,7 @@ module tb_rtl_ksa();
                 #10;
                 printvalues;
                 #10;
-                rddata = 8'b11111111
+                rddata = 8'b11111111;
                 printvalues;
 
 
