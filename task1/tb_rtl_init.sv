@@ -14,36 +14,37 @@ module tb_rtl_init();
                 forever#5 clk = ~clk;
         end
 
+        task printvalues;
+                 $display("rdy:%b, wrdata: %h, wren: %b, addr: %h", rdy, wrdata, wren, addr);
+        endtask
+
         initial begin
                 rst_n = 1;
                 en = 1;
                 #10;
-                $display("rdy:%b, wrdata: %b, wren: %b", rdy, wrdata, wren);
+                printvalues;
                 #10;
                 addr = 8'b11111111
-                $display("rdy:%b, wrdata: %b, wren: %b", rdy, wrdata, wren);
-
-
+                printvalues;
+                
        
                 rst_n =0; 
                 en= 0;
                 #10;
-                $display("rdy:%b, wrdata: %b, wren: %b", rdy, wrdata, wren);
+                printvalues;
                 #10;
        
                 rst_n =1; 
                 en= 0;
                 #10;
-                $display("rdy:%b, wrdata: %b, wren: %b", rdy, wrdata, wren);
+                printvalues;
                 #10;
        
                 rst_n =0; 
                 en= 1;
                 #10;
-                $display("rdy:%b, wrdata: %b, wren: %b", rdy, wrdata, wren);
+                printvalues;
                 #10;
-
-                addr = 8'b11111111
 
         end
     

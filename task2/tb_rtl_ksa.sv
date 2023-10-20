@@ -1,3 +1,5 @@
+
+`timescale 1 ps / 1 ps
 module tb_rtl_ksa();
 
 // Your testbench goes here.
@@ -17,35 +19,40 @@ module tb_rtl_ksa();
                 forever#5 clk = ~clk;
         end
 
+        task printvalues;
+                $display("rdy:%b, wrdata: %h, wren: %b, addr: %h", rdy, wrdata, wren, addr);
+
+        endtask
+
         initial begin
                 rst_n = 1;
                 en = 1;
                 key = 24'h000000;
                 rddata = 8'b0011001;
                 #10;
-                $display("rdy:%b, wrdata: %b, wren: %b, addr: %b", rdy, wrdata, wren, addr);
+                printvalues;
                 #10;
                 rddata = 8'b11111111
-                $display("rdy:%b, wrdata: %b, wren: %b, addr: %b", rdy, wrdata, wren, addr);
+                printvalues;
 
 
        
                 rst_n =0; 
                 en= 0;
                 #10;
-                $display("rdy:%b, wrdata: %b, wren: %b, addr: %b", rdy, wrdata, wren, addr);
+                printvalues;
                 #10;
        
                 rst_n =1; 
                 en= 0;
                 #10;
-                $display("rdy:%b, wrdata: %b, wren: %b, addr: %b", rdy, wrdata, wren, addr);
+                printvalues;
                 #10;
        
                 rst_n =0; 
                 en= 1;
                 #10;
-                $display("rdy:%b, wrdata: %b, wren: %b, addr: %b", rdy, wrdata, wren, addr);
+                printvalues;
                 #10;
         end
 
@@ -59,8 +66,8 @@ module tb_rtl_ksa();
             // Change the key for each test vector
                 key = {24'h000000, i};
 
-                $display("Test vector %d, addr: %h, rddata: %h, rdy:%b, wrdata: %b, wren: %b", 
-                          i, addr, rddata, rdy, wrdata, wren);
+                $display("Test vector %d, addr: %h, rdy:%b, wrdata: %b, wren: %b", 
+                          i, addr, rdy, wrdata, wren);
                 end
 
                 $finish;
