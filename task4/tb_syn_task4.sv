@@ -1,5 +1,5 @@
 `timescale 1 ps / 1 ps
-module tb_rtl_task4();
+module tb_syn_task4();
 
 // Your testbench goes here.
 reg CLOCK_50;
@@ -46,4 +46,4 @@ initial begin
 end
 
 
-endmodule: tb_rtl_task4
+endmodule: tb_syn_task4
