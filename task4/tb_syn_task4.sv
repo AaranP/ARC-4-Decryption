@@ -20,13 +20,16 @@ initial begin
 end
 
 initial begin
-  //put your own directory here, and make sure it's forward slashes not backward slashes
-	$readmemh("C:/Users/idara/Documents/Lab-3-CPEN311/task3/test2.memh", dut.ct.altsyncram_component.m_default.altsyncram_inst.mem_data);
+	$readmemh("C:/Users/idara/Documents/Lab-3-CPEN311/task4/test3.memh", dut.ct.altsyncram_component.m_default.altsyncram_inst.mem_data);
 	KEY[3] = 1'b0;
 	#10;
 	KEY[3] = 1'b1;
 
-		#100000;
+	#2600;
+
+	#25000;
+		
+	#20000;
 		
 	$stop;
 end
