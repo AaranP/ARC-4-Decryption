@@ -12,7 +12,7 @@ module doublecrack(input logic clk, input logic rst_n,
 
     // your code here
     //different wirings for each ptmem instantiation
-    logic [7:0] pt_addr, pt_rddata, pt_wrdata;
+    logic [7:0] pt_addr, pt_rddata, pt_wrdata, ct_addr1, ct_addr2;
     logic pt_wren;
 
     logic arc4en, arcrdy;
@@ -29,11 +29,11 @@ module doublecrack(input logic clk, input logic rst_n,
     // for this task only, you may ADD ports to crack
     crack c1(.clk(clk), .rst_n(rst_n), .en(en), .rdy(rdy1),
              .key_start(24'h000000), .key(key1), .key_valid(kv1),
-             .ct_addr(ct_addr), .ct_rddata(ct_rddata));
+             .ct_addr(ct_addr), .ct_rddata(ct_rddata), .kv(kv2));
 
     crack c2(.clk(clk), .rst_n(rst_n), .en(en), .rdy(rdy2), 
              .key_start(24'h000001), .key(key2), .key_valid(kv2), 
-             .ct_addr(ct_addr), .ct_rddata(ct_rddata));
+             .ct_addr(ct_addr), .ct_rddata(ct_rddata), .kv(kv1));
 
     arc4 a4(.clk(clk), .rst_n(rst_n),
             .en(arc4en), .rdy(arcrdy), .key(key), .ct_addr(ct_addr), .ct_rddata(ct_rddata),
@@ -43,9 +43,10 @@ module doublecrack(input logic clk, input logic rst_n,
     // your code here
     always_ff@(posedge clk) begin
             if(~rst_n) begin
-                    {arc4en}  <= {0};
+                    {arc4en}  <= {1'b0};
                     rdy <= 1'b1;
                     key_valid <= 1'b0;
+		    current_state <= `start;
             end else begin
                     case(current_state) 
 
