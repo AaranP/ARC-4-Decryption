@@ -13,8 +13,8 @@ logic pt_wren;
         prga dut(.*);
 
         initial begin
-	    CLOCK_50 <= 1'b0;
-	    forever #5 CLOCK_50 <= ~CLOCK_50;
+	    clk <= 1'b0;
+	    forever #5 clk <= ~clk;
         end
 
         /*task printvalues;
@@ -28,13 +28,13 @@ logic pt_wren;
                 rst_n = 1;
                 en = 1;
                 key = 24'h000000;
-                rddata = 8'b0011001;
+                ct_rddata = 8'b0011001;
                 #10;
-                assert(dut.length == 8'b0011001);
-                else$ $error("message length is not read properly");
+                assert(dut.length == 8'b0011001)
+                else $error("message length is not read properly");
                 #2500;
-                assert(dut.k == 8'b0011001);
-                else$ $error("k length is not read properly");
+                assert(dut.k == 8'b0011001)
+                else $error("k length is not read properly");
                 #50;
                 $stop;
        

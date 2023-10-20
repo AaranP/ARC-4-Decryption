@@ -19,8 +19,8 @@ module tb_rtl_arc4();
         arc4 dut(.*);
 
         initial begin
-	    CLOCK_50 <= 1'b0;
-	    forever #5 CLOCK_50 <= ~CLOCK_50;
+	    clk <= 1'b0;
+	    forever #5 clk <= ~clk;
         end
 
         //task printvalues;
@@ -33,21 +33,21 @@ module tb_rtl_arc4();
                 rst_n = 1;
                 en = 1;
                 key = 24'h000000;
-                rddata = 8'b0011001;
+                ct_rddata = 8'b0011001;
                 #10;
-                assert(dut.current_state == `start);
+                assert(dut.current_state == `start)
                 else $error ("module didn't start");
                 #2500;
 
-                assert(dut.current_state == `initialize);
+                assert(dut.current_state == `initialize)
                 else $error ("module not in initialize state");
                 #2500;
 
-                assert(dut.current_state == `keyschedule);
+                assert(dut.current_state == `keyschedule)
                 else $error ("KSA did not start");
                 #2500;
 
-                assert(dut.current_state == `randomnum);
+                assert(dut.current_state == `randomnum)
                 else $error("prga is not started");
 
                 $stop;
