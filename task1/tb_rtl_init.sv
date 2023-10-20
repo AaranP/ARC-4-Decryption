@@ -1,14 +1,14 @@
 `timescale 1ps/1ps
 
 module tb_rtl_init();
-        logic clk, rst_n, en;
-        logic rdy;
-        logic[7:0] addr, wrdata, wren;
+        reg clk, rst_n, en;
+        wire rdy, wren;
+        wire [7:0] addr, wrdata;
+
     
-        init DUT(.clk(clk), .rst_n(rst_n), .en(en), .rdy(rdy), .addr(addr), .wr(data), .wren(wren));\
+        init DUT(.clk(clk), .rst_n(rst_n), .en(en), .rdy(rdy), .addr(addr), .wrdata(wrdata), .wren(wren));
 
-        
-
+	
         initial begin  //reset
                 clk = 0;
                 forever#5 clk = ~clk;
@@ -19,12 +19,14 @@ module tb_rtl_init();
         endtask
 
         initial begin
-                rst_n = 1;
+                rst_n = 0;
                 en = 1;
+		#10;
+		rst_n = 1;
                 #10;
                 printvalues;
                 #10;
-                addr = 8'b11111111
+                DUT.addr = 8'b11111111;
                 printvalues;
                 
        
@@ -46,6 +48,7 @@ module tb_rtl_init();
                 printvalues;
                 #10;
 
+		$stop;
         end
     
 
