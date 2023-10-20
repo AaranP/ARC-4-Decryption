@@ -8,7 +8,8 @@
 module crack(input logic clk, input logic rst_n,
              input logic en, output logic rdy, input [23:0] key_start,
              output logic [23:0] key, output logic key_valid,
-             output logic [7:0] ct_addr, input logic [7:0] ct_rddata);
+             output logic [7:0] ct_addr, input logic [7:0] ct_rddata,
+             input logic [7:0] addr, output logic [7:0] data);
 
     // your code here
 
@@ -25,7 +26,7 @@ module crack(input logic clk, input logic rst_n,
     // your code here
     always_ff@(posedge clk or negedge rst_n) begin
         
-        if (~rst_n) begin
+        if (~rst_n) begin 
 
                 arcrst_n <= 1'b0;
                 current_state <= `start;
@@ -92,6 +93,8 @@ module crack(input logic clk, input logic rst_n,
                 `state5: begin
                          rdy <= 1'b1;
                          current_state <= `state5;
+                         pt_addr <= addr;
+                         data <= 
                         end
 
                 default: current_state <= `state5;
