@@ -1,5 +1,5 @@
 `timescale 1 ps / 1 ps
-module tb_syn_task4();
+module tb_rtl_task4();
 
 // Your testbench goes here.
 reg CLOCK_50;
@@ -19,20 +19,31 @@ initial begin
 	forever #5 CLOCK_50 <= ~CLOCK_50;
 end
 
+task printvalues;
+	$display("HEX0: %b, HEX1: %b, HEX2: %b, HEX3: %b, HEX4: %b, HEX5: %b, key: %h", HEX0, HEX1, HEX2, HEX3, HEX4, HEX5, dut.key);
+endtask
+
+task reset;
+ 	KEY[3] = 1'b0;
+	#10;
+	KEY[3] = 1'b1;	
+endtask
+	
 initial begin
 	$readmemh("C:/Users/idara/Documents/Lab-3-CPEN311/task4/test3.memh", dut.ct.altsyncram_component.m_default.altsyncram_inst.mem_data);
-	KEY[3] = 1'b0;
-	#10;
-	KEY[3] = 1'b1;
+	reset;
 
-	#2600;
+	#300000;
+	printvalues;
+	
+	$readmemh("C:/Users/idara/Documents/Lab-3-CPEN311/task3/test2.memh", dut.ct.altsyncram_component.m_default.altsyncram_inst.mem_data);
+	 reset;
 
-	#25000;
-		
-	#20000;
-		
+	#600000;
+	printvalues;
+
 	$stop;
 end
 
 
-endmodule: tb_syn_task4
+endmodule: tb_rtl_task4
