@@ -27,6 +27,60 @@ initial begin
 	$stop;
 end
 
+task printvalues;
+	        $display("HEX0: %b, HEX1: %b, HEX2: %b, HEX3: %b, HEX4: %b, HEX5: %b, key: %h", HEX0, HEX1, HEX2, HEX3, HEX4, HEX5, dut.key);
+            $display("rdy:%b, wrdata: %h, wren: %b, addr: %h", rdy, wrdata, wren, addr);
+        ENDTASK
+
+
+        initial begin
+                rst_n = 1;
+                en = 1;
+                key = 24'h000000;
+                rddata = 8'b0011001;
+                #10;
+                printvalues;
+                #10;
+                rddata = 8'b11111111
+                printvalues;
+
+       
+                rst_n =0; 
+                en= 0;
+                #10;
+                printvalues;
+                #10;
+       
+                rst_n =1; 
+                en= 0;
+                #10;
+                printvalues;
+                #10;
+       
+                rst_n =0; 
+                en= 1;
+                #10;
+                printvalues;
+                #10;
+        end
+
+        initial begin
+                rst_n = 1;
+                en = 1;
+                addr = 8'b0;
+                key = 24'h000000;
+                #10;
+                 for (int i = 0; i < 256; i = i + 1) begin
+                key = {24'h000000, i};
+
+                $display("Test vector %d, addr: %h, rddata: %h, rdy:%b, wrdata: %b, wren: %b, key:%h", 
+                          i, addr, rddata, rdy, wrdata, wren, key);
+                printvalues; 
+                end
+
+                $finish;
+        end
+
 
 	
 endmodule: tb_rtl_task1
