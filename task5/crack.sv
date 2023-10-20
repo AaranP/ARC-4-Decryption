@@ -8,8 +8,7 @@
 module crack(input logic clk, input logic rst_n,
              input logic en, output logic rdy, input [23:0] key_start,
              output logic [23:0] key, output logic key_valid,
-             output logic [7:0] ct_addr, input logic [7:0] ct_rddata,
-             input logic [7:0] addr, output logic [7:0] data);
+             output logic [7:0] ct_addr, input logic [7:0] ct_rddata, input logic kv);
 
     // your code here
 
@@ -26,7 +25,7 @@ module crack(input logic clk, input logic rst_n,
     // your code here
     always_ff@(posedge clk or negedge rst_n) begin
         
-        if (~rst_n) begin 
+        if (~rst_n) begin
 
                 arcrst_n <= 1'b0;
                 current_state <= `start;
@@ -93,8 +92,6 @@ module crack(input logic clk, input logic rst_n,
                 `state5: begin
                          rdy <= 1'b1;
                          current_state <= `state5;
-                         pt_addr <= addr;
-                         data <= 
                         end
 
                 default: current_state <= `state5;
@@ -104,7 +101,10 @@ module crack(input logic clk, input logic rst_n,
 
 always_comb begin
 	if(current_state == `state2) begin
-                if (pt_wren ) begin
+                
+		if (kv) begin
+			flag = 4'd1;
+		end else if (pt_wren ) begin
                                         
                         if ((pt_wrdata < 8'h20) || (pt_wrdata > 8'h7E) && (pt_addr != 8'd0)) begin //check if wrdata is not within the ascii range
                                 if(key == 24'hffffff) begin //if at max key don't increment and finish
@@ -125,6 +125,9 @@ always_comb begin
         end else begin
 		flag = 4'd0;
 	end
+	
+	
+
 end
 
 endmodule: crack
