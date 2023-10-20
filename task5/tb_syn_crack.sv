@@ -1,5 +1,5 @@
 `timescale 1 ps / 1 ps
-module tb_rtl_crack();
+module tb_syn_crack();
 
 reg clk, rst_n, en, kv;
 reg [7:0] ct_rddata;
@@ -129,4 +129,4 @@ initial begin
 	$stop;
 end
 
-endmodule: tb_rtl_crack
+endmodule: tb_syn_crack
