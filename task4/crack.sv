@@ -1,10 +1,10 @@
-`define start 4'd0
-`define state1 4'd1
-`define state2 4'd2
-`define state3 4'd3
-`define state4 4'd4
-`define statea 4'd6
-`define state5 4'd5
+`define startc 4'd0
+`define state1c 4'd1
+`define state2c 4'd2
+`define state3c 4'd3
+`define state4c 4'd4
+`define stateac 4'd6
+`define state5c 4'd5
 module crack(input logic clk, input logic rst_n,
              input logic en, output logic rdy,
              output logic [23:0] key, output logic key_valid,
@@ -28,7 +28,7 @@ module crack(input logic clk, input logic rst_n,
         if (~rst_n) begin
 
                 arcrst_n <= 1'b0;
-                current_state <= `start;
+                current_state <= `startc;
                 key <= 24'h000000;
                 key_valid <= 1'b0;
                 {pause, k, length, arc4en} <= {8'd0, 8'd0, 8'd0, 1'b0};
@@ -38,69 +38,69 @@ module crack(input logic clk, input logic rst_n,
 
                 case (current_state)
 
-                `start : begin //check for enable signal to start crack, and turn off arc reset
+                `startc : begin //check for enable signal to start crack, and turn off arc reset
                         arcrst_n <= 1'b1;
                         if (en) begin
-                                current_state <= `state1;
+                                current_state <= `state1c;
 				
                         end else begin
-                                current_state <= `start;
+                                current_state <= `startc;
                         end
                         end
 
-                `state1 : begin //assign length to ctrddata and checkin if arcrdy is on
+                `state1c : begin //assign length to ctrddata and checkin if arcrdy is on
                           rdy <= 1'b0;
 			  length <= ct_rddata;
                           
                           if (arcrdy) begin
                                 arc4en <= 1'b1;
-                                current_state <= `statea;
+                                current_state <= `stateac;
                           end else begin
-                                current_state <= `state1;
+                                current_state <= `state1c;
                           end
                         end
-		`statea : begin
+		`stateac : begin
 			  arc4en <= 1'b0;
-			  current_state <= `state2;
+			  current_state <= `state2c;
 			  end
-                `state2 : begin //check if arc is writing to plaintext mem, or has reached end of memory
+                `state2c : begin //check if arc is writing to plaintext mem, or has reached end of memory
                           
                           if (flag == 4'd1) begin
-                                current_state <= `state5;
+                                current_state <= `state5c;
                                 key_valid <= 1'b0;
                           end else if (flag == 4'd2) begin
-                                current_state <= `state3;
+                                current_state <= `state3c;
                                 key <= key + 24'h000001;
                                 arcrst_n <= 1'b0;
                           end else if (flag == 4'd3) begin
-                                current_state <= `state2;
+                                current_state <= `state2c;
                           end else if (flag == 4'd4) begin
                                 key_valid <= 1'b1;
-                                current_state <= `state5;
+                                current_state <= `state5c;
                           end else if (flag == 4'd5) begin
-                                current_state <= `state2;
+                                current_state <= `state2c;
                           end else begin
                                 current_state <= current_state;
                           end
                         end
 
-                `state3: begin  //after incrementing key, and arcrstn
+                `state3c: begin  //after incrementing key, and arcrstn
                          arcrst_n <= 1'b1;
-                         current_state <= `state1;
+                         current_state <= `state1c;
                          end
 
-                `state5: begin
+                `state5c: begin
                          rdy <= 1'b1;
-                         current_state <= `state5;
+                         current_state <= `state5c;
                         end
 
-                default: current_state <= `state5;
+                default: current_state <= `state5c;
                 endcase
         end
         end
 
 always_comb begin
-	if(current_state == `state2) begin
+	if(current_state == `state2c) begin
                 if (pt_wren ) begin
                                         
                         if ((pt_wrdata < 8'h20) || (pt_wrdata > 8'h7E) && (pt_addr != 8'd0)) begin //check if wrdata is not within the ascii range
