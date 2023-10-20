@@ -1,49 +1,72 @@
 `timescale 1 ps / 1 ps
-module tb_rtl_task4();
+module tb_rtl_crack();
+
+reg clk, rst_n, en;
+reg [7:0] ct_rddata;
+
+wire rdy, key_valid;
+wire [23:0] key;
+wire [7:0] ct_addr;
 
 // Your testbench goes here.
-reg CLOCK_50;
-reg [3:0] KEY;
-reg [9:0] SW;
-
-wire [6:0] HEX0, HEX1, HEX2, HEX3, HEX4, HEX5;
-wire [9:0] LEDR;
-
-task4 dut(.CLOCK_50(CLOCK_50), .KEY(KEY), .SW(SW),
-             .HEX0(HEX0), .HEX1(HEX1), .HEX2(HEX2),
-             .HEX3(HEX3), .HEX4(HEX4), .HEX5(HEX5),
-             .LEDR(LEDR));
+crack dut (.clk(clk), .rst_n(rst_n), .en(en), .rdy(rdy),
+             .key(key), .key_valid(key_valid), .ct_addr(ct_addr), .ct_rddata(ct_rddata));
 
 initial begin
-	CLOCK_50 <= 1'b0;
-	forever #5 CLOCK_50 <= ~CLOCK_50;
+	clk <= 1'b0;
+	forever #5 clk <= ~clk;
 end
 
 task printvalues;
-	$display("HEX0: %b, HEX1: %b, HEX2: %b, HEX3: %b, HEX4: %b, HEX5: %b, key: %h", HEX0, HEX1, HEX2, HEX3, HEX4, HEX5, dut.key);
+	$display("rdy: %b, key_valid: %b, key: %h, ct_addr: %h", rdy, key_valid, key, ct_addr);
 endtask
 
-task reset;
- 	KEY[3] = 1'b0;
-	#10;
-	KEY[3] = 1'b1;	
-endtask
-	
 initial begin
-	$readmemh("C:/Users/idara/Documents/Lab-3-CPEN311/task4/test3.memh", dut.ct.altsyncram_component.m_default.altsyncram_inst.mem_data);
-	reset;
+	rst_n = 1'b0;
+	#10;
+	rst_n = 1'b1;
+	ct_rddata = 8'd2;
+	printvalues;
 
-	#300000;
+	en = 1'b1;
+	#10;
+	en = 1'b0;
+
+	#28000;
+	printvalues;
+
+	#28000;
+	printvalues;
+
+
+	#28000;
+	printvalues;
+
+	#28000;
+	printvalues;
+
+	dut.key = 24'hfffffa;
+	
+	#24000;
 	printvalues;
 	
-	$readmemh("C:/Users/idara/Documents/Lab-3-CPEN311/task3/test2.memh", dut.ct.altsyncram_component.m_default.altsyncram_inst.mem_data);
-	 reset;
-
-	#600000;
+	#24000;
 	printvalues;
+
+	#24000;
+	printvalues;
+
+	#24000;
+	printvalues;
+
+	#24000;
+	printvalues;
+
+	#24000;
+	printvalues;
+
 
 	$stop;
 end
 
-
-endmodule: tb_rtl_task4
+endmodule: tb_rtl_crack
