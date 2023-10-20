@@ -1,3 +1,5 @@
+`timescale 1ps/1ps
+
 module tb_rtl_init();
         logic clk, rst_n, en;
         logic rdy;
@@ -14,7 +16,35 @@ module tb_rtl_init();
 
         initial begin
                 rst_n = 1;
-                en = 0;
+                en = 1;
+                #10;
+                $display("rdy:%b, wrdata: %b, wren: %b", rdy, wrdata, wren);
+                #10;
+                addr = 8'b11111111
+                $display("rdy:%b, wrdata: %b, wren: %b", rdy, wrdata, wren);
+
+
+       
+                rst_n =0; 
+                en= 0;
+                #10;
+                $display("rdy:%b, wrdata: %b, wren: %b", rdy, wrdata, wren);
+                #10;
+       
+                rst_n =1; 
+                en= 0;
+                #10;
+                $display("rdy:%b, wrdata: %b, wren: %b", rdy, wrdata, wren);
+                #10;
+       
+                rst_n =0; 
+                en= 1;
+                #10;
+                $display("rdy:%b, wrdata: %b, wren: %b", rdy, wrdata, wren);
+                #10;
+
+                addr = 8'b11111111
+
         end
     
 
