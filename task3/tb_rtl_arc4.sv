@@ -1,4 +1,13 @@
 `timescale 1 ps / 1 ps
+`define reset 4'd1
+`define start 4'd2
+`define initialize 4'd3
+`define keyschedule 4'd4
+`define randomnum 4'd5
+`define done 4'd6
+`define pause 4'd7
+`define keyschedule2 4'd8
+`define randomnum2 4'd9
 
 module tb_rtl_arc4();
 
@@ -14,11 +23,11 @@ module tb_rtl_arc4();
 	    forever #5 CLOCK_50 <= ~CLOCK_50;
         end
 
-        task printvalues;
-                $display("rdy:%b, wren: %b, addr: %h, ct_addr: %h, ptaddr:%h, pt_wrdata: %h", 
-                            rdy, wren, addr,ct_addr, pt_addr, pt_wrdata);
+        //task printvalues;
+       //         $display("rdy:%b, wren: %b, addr: %h, ct_addr: %h, ptaddr:%h, pt_wrdata: %h", 
+                            //rdy, wren, addr,ct_addr, pt_addr, pt_wrdata);
 
-        endtask
+        //endtask
 
           initial begin
                 rst_n = 1;
@@ -26,50 +35,30 @@ module tb_rtl_arc4();
                 key = 24'h000000;
                 rddata = 8'b0011001;
                 #10;
-                printvalues;
-                #10;
-                rddata = 8'b11111111
-                printvalues;
+                assert(dut.current_state == `start);
+                else $error ("module didn't start");
+                #2500;
+
+                assert(dut.current_state == `initialize);
+                else $error ("module not in initialize state");
+                #2500;
+
+                assert(dut.current_state == `keyschedule);
+                else $error ("KSA did not start");
+                #2500;
+
+                assert(dut.current_state == `randomnum);
+                else $error("prga is not started");
+
+                $stop;
+               
 
 
        
-                rst_n =0; 
-                en= 0;
-                #10;
-                printvalues;
-                #10;
-       
-                rst_n =1; 
-                en= 0;
-                #10;
-                printvalues;
-                #10;
-       
-                rst_n =0; 
-                en= 1;
-                #10;
-                printvalues;
-                #10;
+               
         end
 
-        initial begin
-                rst_n = 1;
-                en = 1;
-                addr = 8'b0;
-                key = 24'h000000;
-                #10;
-                 for (int i = 0; i < 256; i = i + 1) begin
-            // Change the key for each test vector
-                key = {24'h000000, i};
-
-                $display(" Test vector: %d, rdy:%b, wren: %b, addr: %h, ct_addr: %h, ptaddr:%h, pt_wrdata: %h", 
-                            i, rdy, wren, addr,ct_addr, pt_addr, pt_wrdata);
-                end
-
-                asserrt(dut.)
-
-                $finish;
-        end
+       
 
         
 

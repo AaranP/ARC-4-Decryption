@@ -17,11 +17,12 @@ logic pt_wren;
 	    forever #5 CLOCK_50 <= ~CLOCK_50;
         end
 
-        task printvalues;
+        /*task printvalues;
                 $display("rdy:%b, wren: %b, addr: %h, ct_addr: %h, ptaddr:%h, pt_wrdata: %h", 
                             rdy, wren, addr,ct_addr, pt_addr, pt_wrdata);
 
         endtask
+        */
 
           initial begin
                 rst_n = 1;
@@ -29,51 +30,14 @@ logic pt_wren;
                 key = 24'h000000;
                 rddata = 8'b0011001;
                 #10;
-                printvalues;
-                #10;
-                rddata = 8'b11111111
-                printvalues;
-                assert(dut.length == 8'b0011001)
+                assert(dut.length == 8'b0011001);
                 else$ $error("message length is not read properly");
-
                 #2500;
-
-
+                assert(dut.k == 8'b0011001);
+                else$ $error("k length is not read properly");
+                #50;
+                $stop;
        
-                rst_n =0; 
-                en= 0;
-                #10;
-                printvalues;
-                #10;
-       
-                rst_n =1; 
-                en= 0;
-                #10;
-                printvalues;
-                #10;
-       
-                rst_n =0; 
-                en= 1;
-                #10;
-                printvalues;
-                #10;
+               
         end
-
-        initial begin
-                rst_n = 1;
-                en = 1;
-                addr = 8'b0;
-                key = 24'h000000;
-                #10;
-                 for (int i = 0; i < 256; i = i + 1) begin
-            // Change the key for each test vector
-                key = {24'h000000, i};
-
-                $display(" Test vector: %d, rdy:%b, wren: %b, addr: %h, ct_addr: %h, ptaddr:%h, pt_wrdata: %h", 
-                            i, rdy, wren, addr,ct_addr, pt_addr, pt_wrdata);
-                end
-
-                $finish;
-        end
-
 endmodule: tb_rtl_prga
