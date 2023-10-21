@@ -1,13 +1,3 @@
-`define state1 4'd1
-`define state2 4'd2
-`define state3 4'd3
-`define state4 4'd4
-`define state5 4'd5
-`define state6 4'd6
-`define statex 4'd8
-`define state7 4'd9
-`define done 4'd7
-
 `timescale 1 ps / 1 ps
 
 
@@ -77,22 +67,7 @@ task2 dut(.CLOCK_50(CLOCK_50), .KEY(KEY), .SW(SW),
                 #10;
         end
 
-        initial begin
-                KEY[3] = 1;
-                //en = 1;
-                //addr = 8'b0;
-                SW[9:0] = 10'b0000011000;
-                #10;
-                 for (int i = 0; i < 256; i = i + 1) begin
-                SW[9:0] = {10'b0000011000,i}; 
-
-                $display("Test vector %d, addr: %h, rddata: %h, rdy:%b, wrdata: %b, wren: %b", 
-                          i, addr, rddata, rdy, wrdata, wren);
-                printvalues; 
-                end
-
-                $finish;
-        end
+        
     
 
 endmodule: tb_syn_task2

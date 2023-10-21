@@ -77,22 +77,7 @@ task2 dut(.CLOCK_50(CLOCK_50), .KEY(KEY), .SW(SW),
                 #10;
         end
 
-        initial begin
-                KEY[3] = 1;
-                //en = 1;
-                //addr = 8'b0;
-                SW[9:0] = 10'b0000011000;
-                #10;
-                 for (int i = 0; i < 256; i = i + 1) begin
-                SW[9:0] = {10'b0000011000,i}; 
-
-                $display("Test vector %d, addr: %h, rddata: %h, rdy:%b, wrdata: %b, wren: %b", 
-                          i, addr, rddata, rdy, wrdata, wren);
-                printvalues; 
-                end
-
-                $finish;
-        end
+        
     
 
-        endmodule: tb_rtl_task2
+endmodule: tb_rtl_task2

@@ -56,22 +56,6 @@ module tb_rtl_ksa();
                 #10;
         end
 
-        initial begin
-                rst_n = 1;
-                en = 1;
-                addr = 8'b0;
-                key = 24'h000000;
-                #10;
-                 for (int i = 0; i < 256; i = i + 1) begin
-            // Change the key for each test vector
-                key = {24'h000000, i};
-
-                $display("Test vector %d, addr: %h, rdy:%b, wrdata: %b, wren: %b", 
-                          i, addr, rdy, wrdata, wren);
-                end
-
-                $finish;
-        end
-    
+            
 
 endmodule: tb_rtl_ksa
