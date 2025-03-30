@@ -1,4 +1,4 @@
-# ARC 4 Decryption module
+# ARC 4 Decryption Module
 ## Overview
 This project involves designing an ARC4 decryption circuit and a related cracking circuit. ARC4 is a symmetric stream cipher that was once widely used for encrypting web traffic and wireless data. The project consists of the following tasks:
 
